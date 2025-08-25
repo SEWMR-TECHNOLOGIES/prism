@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import prismLogo from '@/assets/logo.png';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -71,11 +72,16 @@ export function Sidebar({ className }: SidebarProps) {
             {!isCollapsed && (
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                  <CheckSquare className="h-5 w-5 text-primary-foreground" />
+                  <img
+                    src={prismLogo} 
+                    alt="Prism Logo"
+                    className="h-auto w-12 object-contain"
+                  />
                 </div>
-                <span className="font-semibold text-lg">Agenda Aura</span>
+                <span className="font-semibold text-lg">prism</span>
               </div>
             )}
+
             <Button
               variant="ghost"
               size="sm"

@@ -8,7 +8,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        <div 
+        <div
           className="absolute inset-0 opacity-20"
           style={{
             backgroundImage: `url(${heroImage})`,
@@ -17,21 +17,21 @@ const Index = () => {
           }}
         />
         <div className="gradient-accent absolute inset-0" />
-        
+
         <div className="relative max-w-7xl mx-auto px-6 py-24 lg:py-32">
           <div className="text-center space-y-8">
             <div className="space-y-4">
-              <h1 className="text-5xl lg:text-7xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent animate-fade-in">
-                Agenda Aura
+              <h1 className="text-5xl lg:text-7xl font-bold text-white leading-tight animate-fade-in-down">
+                Prism
               </h1>
               <p className="text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto animate-fade-in">
-                Your powerful events tracker to organize tasks, manage deadlines, and stay on top of everything that matters
+                See your day from every angle — manage tasks, track events, and organize everything that matters in one place.
               </p>
             </div>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up">
               <Link to="/dashboard">
-                <Button size="lg" className="gradient-primary text-white hover:opacity-90 transition-opacity">
+                <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
                   Get Started
                   <ArrowRight className="h-5 w-5 ml-2" />
                 </Button>
@@ -54,7 +54,7 @@ const Index = () => {
               Everything you need to stay organized
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Powerful features designed to help you track, manage, and complete your tasks efficiently
+              Powerful features designed to help you plan, manage, and complete your tasks efficiently
             </p>
           </div>
 
@@ -65,7 +65,7 @@ const Index = () => {
               </div>
               <h3 className="text-xl font-semibold mb-4">Task Management</h3>
               <p className="text-muted-foreground">
-                Create, organize, and track tasks with categories, priorities, and due dates
+                Create, organize, and track tasks with categories, priorities, and due dates.
               </p>
             </div>
 
@@ -75,7 +75,7 @@ const Index = () => {
               </div>
               <h3 className="text-xl font-semibold mb-4">Event Tracking</h3>
               <p className="text-muted-foreground">
-                Never miss important deadlines like domain renewals, appointments, and more
+                Never miss important deadlines, meetings, renewals, and personal events.
               </p>
             </div>
 
@@ -85,7 +85,7 @@ const Index = () => {
               </div>
               <h3 className="text-xl font-semibold mb-4">Progress Tracking</h3>
               <p className="text-muted-foreground">
-                Monitor your productivity with detailed stats and completion rates
+                Visualize your productivity with stats and completion insights.
               </p>
             </div>
 
@@ -95,7 +95,7 @@ const Index = () => {
               </div>
               <h3 className="text-xl font-semibold mb-4">Priority Management</h3>
               <p className="text-muted-foreground">
-                Set priorities from urgent to low and focus on what matters most
+                Set priorities from urgent to low and focus on what matters most.
               </p>
             </div>
 
@@ -105,7 +105,7 @@ const Index = () => {
               </div>
               <h3 className="text-xl font-semibold mb-4">Categories</h3>
               <p className="text-muted-foreground">
-                Organize tasks by work, personal, health, finance, and custom categories
+                Organize tasks by work, personal, finance, health, or custom categories.
               </p>
             </div>
 
@@ -115,7 +115,7 @@ const Index = () => {
               </div>
               <h3 className="text-xl font-semibold mb-4">Smart Reminders</h3>
               <p className="text-muted-foreground">
-                Stay ahead with overdue alerts and upcoming task notifications
+                Stay ahead with timely alerts for overdue tasks and upcoming deadlines.
               </p>
             </div>
           </div>
@@ -126,13 +126,13 @@ const Index = () => {
       <section className="py-24 gradient-primary relative">
         <div className="max-w-4xl mx-auto text-center px-6">
           <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
-            Ready to take control of your tasks?
+            Ready to take control of your day?
           </h2>
           <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-            Join thousands of users who have transformed their productivity with Agenda Aura
+            Join thousands of users managing their tasks and events seamlessly with Prism.
           </p>
           <Link to="/dashboard">
-            <Button size="lg" variant="secondary" className="bg-white text-primary hover:bg-white/90">
+            <Button size="lg" variant="secondary" className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
               Start Organizing Today
               <ArrowRight className="h-5 w-5 ml-2" />
             </Button>

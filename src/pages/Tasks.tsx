@@ -119,7 +119,7 @@ export default function Tasks() {
           </div>
           <Button 
             onClick={() => setIsAddTaskOpen(true)}
-            className="gradient-primary text-white hover:opacity-90 transition-opacity"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
           >
             <Plus className="h-4 w-4 mr-2" />
             Add Task
