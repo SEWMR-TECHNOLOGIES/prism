@@ -261,13 +261,12 @@ export default function Tasks() {
           ) : (
             <div className="grid gap-4">
               {filteredTasks.map((task) => (
-                <TaskCard
-                  key={task.id}
-                  task={task}
-                  onToggleStatus={handleToggleStatus}
-                  onEdit={setEditingTask}
-                  onDelete={handleDeleteTask}
-                />
+                    <TaskCard
+                      key={task.id}
+                      task={task}
+                      onToggleStatus={handleToggleStatus}
+                      onDelete={handleDeleteTask}
+                    />
               ))}
             </div>
           )}

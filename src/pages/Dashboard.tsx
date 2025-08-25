@@ -1,6 +1,8 @@
 import { useTasks } from '@/hooks/useTasks';
 import { StatsCard } from '@/components/dashboard/stats-card';
 import { UpcomingTasks } from '@/components/dashboard/upcoming-tasks';
+import { NextUp } from '@/components/dashboard/next-up';
+import { AlmostDue } from '@/components/dashboard/almost-due';
 import { TaskCard } from '@/components/tasks/task-card';
 import { AddTaskForm } from '@/components/tasks/add-task-form';
 import { Button } from '@/components/ui/button';
@@ -10,7 +12,8 @@ import {
   AlertTriangle, 
   Calendar,
   Plus,
-  Target
+  Target,
+  TrendingUp
 } from 'lucide-react';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -67,21 +70,21 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <>
+      <div className="space-y-8 pt-4 lg:pt-0">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold text-foreground">
               Dashboard
             </h1>
-            <p className="text-muted-foreground mt-2">
+            <p className="text-muted-foreground mt-1">
               Track your tasks and stay organized
             </p>
           </div>
           <Button 
             onClick={() => setIsAddTaskOpen(true)}
-            className="gradient-primary text-white hover:opacity-90 transition-opacity"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
           >
             <Plus className="h-4 w-4 mr-2" />
             Add Task
@@ -89,43 +92,43 @@ export default function Dashboard() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatsCard
             title="Total Tasks"
             value={stats.total}
             icon={Target}
-            color="bg-primary/20 text-primary"
+            color="bg-primary/10 text-primary border-primary/20"
             description="All tasks created"
           />
           <StatsCard
             title="Completed"
             value={stats.completed}
             icon={CheckCircle}
-            color="bg-green-500/20 text-green-400"
+            color="bg-success/10 text-success border-success/20"
             description={`${stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0}% completion rate`}
           />
           <StatsCard
             title="Pending"
             value={stats.pending}
             icon={Clock}
-            color="bg-blue-500/20 text-blue-400"
+            color="bg-silver/10 text-silver border-silver/20"
             description="Tasks in progress"
           />
           <StatsCard
             title="Overdue"
             value={stats.overdue}
             icon={AlertTriangle}
-            color="bg-red-500/20 text-red-400"
+            color="bg-destructive/10 text-destructive border-destructive/20"
             description="Need immediate attention"
           />
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
           {/* Tasks List */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="xl:col-span-2 space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-semibold">Recent Tasks</h2>
+              <h2 className="text-xl font-semibold">Recent Tasks</h2>
               <Button variant="outline" size="sm">
                 View All
               </Button>
@@ -144,7 +147,7 @@ export default function Dashboard() {
                 </Button>
               </div>
             ) : (
-              <div className="grid gap-4">
+              <div className="space-y-3">
                 {recentTasks.map((task) => (
                   <TaskCard
                     key={task.id}
@@ -157,28 +160,11 @@ export default function Dashboard() {
             )}
           </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
+          {/* Right Sidebar */}
+          <div className="xl:col-span-2 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-6">
+            <NextUp tasks={tasks} onToggleStatus={handleToggleStatus} />
+            <AlmostDue tasks={tasks} />
             <UpcomingTasks tasks={upcomingTasks} />
-            
-            {overdueTasks.length > 0 && (
-              <div className="glass-card p-6">
-                <h3 className="text-lg font-semibold text-red-400 mb-4 flex items-center gap-2">
-                  <AlertTriangle className="h-5 w-5" />
-                  Overdue Tasks
-                </h3>
-                <div className="space-y-3">
-                  {overdueTasks.slice(0, 3).map((task) => (
-                    <div key={task.id} className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-                      <h4 className="font-medium text-sm text-red-400">{task.title}</h4>
-                      <p className="text-xs text-red-300 mt-1">
-                        Due: {task.dueDate && new Date(task.dueDate).toLocaleDateString()}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>
@@ -188,6 +174,6 @@ export default function Dashboard() {
         onOpenChange={setIsAddTaskOpen}
         onSubmit={handleAddTask}
       />
-    </div>
+    </>
   );
 }

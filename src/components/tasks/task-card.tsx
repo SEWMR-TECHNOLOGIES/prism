@@ -1,123 +1,123 @@
 import { Task } from '@/types/task';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { PriorityBadge } from '@/components/ui/priority-badge';
 import { CategoryBadge } from '@/components/ui/category-badge';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Button } from '@/components/ui/button';
-import { Calendar, Clock, MoreHorizontal, Edit, Trash2 } from 'lucide-react';
-import { format, isToday, isTomorrow, isPast } from 'date-fns';
+import { 
+  Clock, 
+  Calendar,
+  Trash2,
+  Check,
+  Circle,
+  AlertTriangle,
+  CalendarClock
+} from 'lucide-react';
+import { format, isToday, isTomorrow, isPast, differenceInHours } from 'date-fns';
 import { cn } from '@/lib/utils';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 
 interface TaskCardProps {
   task: Task;
   onToggleStatus: (id: string) => void;
-  onEdit?: (task: Task) => void;
-  onDelete?: (id: string) => void;
+  onDelete: (id: string) => void;
 }
 
-export function TaskCard({ task, onToggleStatus, onEdit, onDelete }: TaskCardProps) {
-  const isCompleted = task.status === 'completed';
-  const isOverdue = task.dueDate && isPast(new Date(task.dueDate)) && !isCompleted;
-  
+export function TaskCard({ task, onToggleStatus, onDelete }: TaskCardProps) {
   const formatDueDate = (date: Date) => {
     if (isToday(date)) return 'Today';
     if (isTomorrow(date)) return 'Tomorrow';
     return format(date, 'MMM d, yyyy');
   };
 
+  const isOverdue = task.dueDate && isPast(new Date(task.dueDate));
+  const isCompleted = task.status === 'completed';
+  const isDueSoon = task.dueDate && differenceInHours(new Date(task.dueDate), new Date()) <= 48 && !isOverdue;
+
   return (
     <Card className={cn(
-      'glass-card hover:shadow-medium transition-all duration-200 animate-slide-up',
-      isCompleted && 'opacity-60',
-      isOverdue && 'border-red-500/50 bg-red-500/5'
+      "modern-card group",
+      isCompleted && "opacity-60",
+      isOverdue && "border-destructive/50 bg-destructive/5",
+      isDueSoon && "border-warning/50 bg-warning/5"
     )}>
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-start gap-3">
-            <Checkbox
-              checked={isCompleted}
-              onCheckedChange={() => onToggleStatus(task.id)}
-              className="mt-1"
-            />
-            <div className="flex-1 space-y-1">
+      <CardContent className="p-4">
+        <div className="flex items-start gap-4">
+          {/* Status Toggle - Made Super Obvious */}
+          <button
+            onClick={() => onToggleStatus(task.id)}
+            className={cn(
+              "shrink-0 mt-0.5 rounded-full transition-all duration-200",
+              isCompleted ? "task-complete-btn" : "task-pending-btn"
+            )}
+          >
+            {isCompleted ? (
+              <Check className="h-4 w-4" />
+            ) : (
+              <Circle className="h-4 w-4" />
+            )}
+          </button>
+
+          {/* Content */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between gap-2">
               <h3 className={cn(
-                'font-semibold leading-tight',
-                isCompleted && 'line-through text-muted-foreground'
+                "font-medium text-sm leading-tight",
+                isCompleted && "line-through text-muted-foreground"
               )}>
                 {task.title}
               </h3>
-              {task.description && (
-                <p className="text-sm text-muted-foreground">
-                  {task.description}
-                </p>
-              )}
-            </div>
-          </div>
-          
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              {onEdit && (
-                <DropdownMenuItem onClick={() => onEdit(task)}>
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit Task
-                </DropdownMenuItem>
-              )}
-              {onDelete && (
-                <DropdownMenuItem 
+              
+              {/* Due indicators */}
+              <div className="flex items-center gap-1">
+                {isOverdue && (
+                  <Badge variant="destructive" className="text-xs px-1.5 py-0.5">
+                    <AlertTriangle className="h-3 w-3 mr-1" />
+                    Overdue
+                  </Badge>
+                )}
+                {isDueSoon && !isOverdue && (
+                  <Badge variant="outline" className="text-xs px-1.5 py-0.5 border-warning text-warning">
+                    <CalendarClock className="h-3 w-3 mr-1" />
+                    Due Soon
+                  </Badge>
+                )}
+                
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => onDelete(task.id)}
-                  className="text-destructive focus:text-destructive"
+                  className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
                 >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete Task
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </CardHeader>
-      
-      <CardContent className="pt-0">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <CategoryBadge category={task.category} />
-            <PriorityBadge priority={task.priority} />
-          </div>
-          
-          {task.dueDate && (
-            <div className={cn(
-              'flex items-center gap-1 text-xs',
-              isOverdue ? 'text-red-400' : 'text-muted-foreground'
-            )}>
-              <Calendar className="h-3 w-3" />
-              <span>{formatDueDate(new Date(task.dueDate))}</span>
-              {isOverdue && <Clock className="h-3 w-3 ml-1" />}
+                  <Trash2 className="h-3 w-3" />
+                </Button>
+              </div>
             </div>
-          )}
-        </div>
-        
-        {task.tags && task.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-3">
-            {task.tags.map(tag => (
-              <span
-                key={tag}
-                className="px-2 py-1 bg-muted/50 text-xs rounded-full text-muted-foreground"
-              >
-                #{tag}
-              </span>
-            ))}
+
+            {task.description && (
+              <p className="text-xs text-muted-foreground mt-2 line-clamp-2">
+                {task.description}
+              </p>
+            )}
+
+            {/* Meta information */}
+            <div className="flex items-center gap-2 mt-3">
+              <CategoryBadge category={task.category} />
+              <PriorityBadge priority={task.priority} />
+              
+              {task.dueDate && (
+                <div className={cn(
+                  "flex items-center gap-1 text-xs",
+                  isOverdue ? "text-destructive" : 
+                  isDueSoon ? "text-warning" : 
+                  "text-muted-foreground"
+                )}>
+                  <Calendar className="h-3 w-3" />
+                  <span>{formatDueDate(new Date(task.dueDate))}</span>
+                </div>
+              )}
+            </div>
           </div>
-        )}
+        </div>
       </CardContent>
     </Card>
   );

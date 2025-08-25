@@ -8,60 +8,62 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
+    --background: 0 0% 2%;
     --foreground: 0 0% 98%;
 
-    --card: 240 10% 3.9%;
+    --card: 0 0% 4%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 240 10% 3.9%;
+    --popover: 0 0% 4%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 263 70% 50%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 2%;
 
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 0 0% 8%;
+    --secondary-foreground: 0 0% 85%;
 
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 0 0% 8%;
+    --muted-foreground: 0 0% 65%;
 
-    --accent: 240 3.7% 15.9%;
+    --accent: 0 0% 12%;
     --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 263 70% 50%;
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 98%;
 
-    /* Custom design tokens for Agenda Aura */
-    --gradient-primary: linear-gradient(135deg, hsl(263 70% 50%) 0%, hsl(220 70% 60%) 100%);
-    --gradient-secondary: linear-gradient(135deg, hsl(240 10% 3.9%) 0%, hsl(240 3.7% 15.9%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(263 70% 50% / 0.1) 0%, hsl(220 70% 60% / 0.1) 100%);
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 2%;
+
+    --border: 0 0% 12%;
+    --input: 0 0% 12%;
+    --ring: 0 0% 98%;
+
+    /* Silver accents */
+    --silver: 0 0% 75%;
+    --silver-light: 0 0% 85%;
+    --silver-dark: 0 0% 45%;
     
-    /* Priority colors */
+    /* Priority colors - refined */
     --priority-urgent: 0 84% 60%;
     --priority-high: 25 95% 53%;
-    --priority-medium: 48 96% 53%;
-    --priority-low: 142 76% 36%;
+    --priority-medium: 38 92% 50%;
+    --priority-low: 142 71% 45%;
     
-    /* Category colors */
-    --category-work: 220 70% 60%;
-    --category-personal: 263 70% 50%;
-    --category-health: 142 76% 36%;
-    --category-finance: 25 95% 53%;
+    /* Category colors - silver-toned */
+    --category-work: 217 19% 70%;
+    --category-personal: 280 20% 70%;
+    --category-health: 142 20% 65%;
+    --category-finance: 38 20% 70%;
     
-    /* Glass morphism */
-    --glass: hsla(240, 10%, 3.9%, 0.8);
-    --glass-border: hsla(0, 0%, 100%, 0.1);
-    
-    /* Shadows */
-    --shadow-soft: 0 4px 6px -1px hsl(240 10% 3.9% / 0.1), 0 2px 4px -1px hsl(240 10% 3.9% / 0.06);
-    --shadow-medium: 0 10px 15px -3px hsl(240 10% 3.9% / 0.1), 0 4px 6px -2px hsl(240 10% 3.9% / 0.05);
-    --shadow-large: 0 25px 50px -12px hsl(240 10% 3.9% / 0.25);
-    --shadow-glow: 0 0 20px hsl(263 70% 50% / 0.3);
+    /* Shadows - refined for dark theme */
+    --shadow-soft: 0 2px 8px hsl(0 0% 0% / 0.12);
+    --shadow-medium: 0 8px 24px hsl(0 0% 0% / 0.18);
+    --shadow-large: 0 20px 60px hsl(0 0% 0% / 0.25);
+    --shadow-focus: 0 0 0 2px hsl(0 0% 98% / 0.2);
 
     --radius: 0.5rem;
 
@@ -83,42 +85,50 @@ All colors MUST be HSL.
   }
 
   .light {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    --background: 0 0% 98%;
+    --foreground: 0 0% 5%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 0 0% 5%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover-foreground: 0 0% 5%;
 
-    --primary: 263 70% 50%;
+    --primary: 0 0% 5%;
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    --secondary: 0 0% 94%;
+    --secondary-foreground: 0 0% 15%;
 
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    --muted: 0 0% 94%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    --accent: 0 0% 88%;
+    --accent-foreground: 0 0% 5%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 263 70% 50%;
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 98%;
 
-    /* Glass morphism for light mode */
-    --glass: hsla(0, 0%, 100%, 0.8);
-    --glass-border: hsla(240, 10%, 3.9%, 0.1);
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 2%;
+
+    --border: 0 0% 88%;
+    --input: 0 0% 88%;
+    --ring: 0 0% 5%;
+
+    /* Silver accents for light mode */
+    --silver: 0 0% 45%;
+    --silver-light: 0 0% 65%;
+    --silver-dark: 0 0% 25%;
     
     /* Shadows for light mode */
-    --shadow-soft: 0 4px 6px -1px hsl(240 5.9% 10% / 0.1), 0 2px 4px -1px hsl(240 5.9% 10% / 0.06);
-    --shadow-medium: 0 10px 15px -3px hsl(240 5.9% 10% / 0.1), 0 4px 6px -2px hsl(240 5.9% 10% / 0.05);
-    --shadow-large: 0 25px 50px -12px hsl(240 5.9% 10% / 0.25);
+    --shadow-soft: 0 2px 8px hsl(0 0% 0% / 0.08);
+    --shadow-medium: 0 8px 24px hsl(0 0% 0% / 0.12);
+    --shadow-large: 0 20px 60px hsl(0 0% 0% / 0.15);
+    --shadow-focus: 0 0 0 2px hsl(0 0% 5% / 0.2);
   }
 }
 
@@ -128,7 +138,8 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 
   html {
@@ -137,44 +148,35 @@ All colors MUST be HSL.
 }
 
 @layer components {
-  .glass-card {
-    @apply bg-card/80 backdrop-blur-sm border border-white/10 rounded-xl shadow-lg;
+  .modern-card {
+    @apply bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-all duration-200;
   }
 
-  .gradient-primary {
-    background: var(--gradient-primary);
+  .silver-accent {
+    @apply text-silver border-silver/20;
   }
 
-  .gradient-secondary {
-    background: var(--gradient-secondary);
+  .action-button {
+    @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
   }
 
-  .gradient-accent {
-    background: var(--gradient-accent);
+  .task-complete-btn {
+    @apply action-button h-8 w-8 bg-success/10 text-success hover:bg-success hover:text-success-foreground border border-success/20 hover:border-success;
   }
 
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
-  }
-
-  .animate-pulse-glow {
-    animation: pulse-glow 2s ease-in-out infinite alternate;
+  .task-pending-btn {
+    @apply action-button h-8 w-8 bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground border border-border;
   }
 
   .animate-slide-up {
-    animation: slide-up 0.5s ease-out;
+    animation: slide-up 0.3s ease-out;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.2s ease-out;
   }
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes pulse-glow {
-  0% { box-shadow: 0 0 20px hsl(263 70% 50% / 0.3); }
-  100% { box-shadow: 0 0 30px hsl(263 70% 50% / 0.6); }
-}
 
 @keyframes slide-up {
   0% { 
