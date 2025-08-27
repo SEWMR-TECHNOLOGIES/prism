@@ -3,9 +3,12 @@ import { Layout } from '@/components/layout/layout';
 import Index from '@/pages/Index';
 import Dashboard from '@/pages/Dashboard';
 import Tasks from '@/pages/Tasks';
+import Calendar from '@/pages/Calendar';
+import Goals from '@/pages/Goals';
+import Archive from '@/pages/Archive';
+import Settings from '@/pages/Settings';
 import NotFound from '@/pages/NotFound';
 import { Toaster } from '@/components/ui/toaster';
-import CalendarPage from './pages/Calendar';
 
 function App() {
   return (
@@ -16,10 +19,10 @@ function App() {
           <Route element={<Layout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/tasks" element={<Tasks />} />
-            <Route path="/calendar" element={<CalendarPage />} />
-            <Route path="/goals" element={<div className="p-8 text-center text-muted-foreground">Goals coming soon...</div>} />
-            <Route path="/archive" element={<div className="p-8 text-center text-muted-foreground">Archive coming soon...</div>} />
-            <Route path="/settings" element={<div className="p-8 text-center text-muted-foreground">Settings coming soon...</div>} />
+            <Route path="/calendar" element={<Calendar />} />
+            <Route path="/goals" element={<Goals />} />
+            <Route path="/archive" element={<Archive />} />
+            <Route path="/settings" element={<Settings />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -1,258 +1,170 @@
-"use client";
-
-import { useState, useMemo } from "react";
-import { Calendar } from "@/components/ui/calendar";
-import { StatsCard } from "@/components/dashboard/stats-card";
-import { TaskCard } from "@/components/tasks/task-card";
-import { AddTaskForm } from "@/components/tasks/add-task-form";
-import { Button } from "@/components/ui/button";
-import { useTasks } from "@/hooks/useTasks";
-import { useToast } from "@/hooks/use-toast";
-import {
-  Plus,
-  Target,
-  CheckCircle,
-  Clock,
-  AlertTriangle,
-} from "lucide-react";
-import { format, isSameMonth, isSameDay, startOfMonth } from "date-fns";
+import { useState } from 'react';
+import { Calendar } from '@/components/ui/calendar';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { useTasks } from '@/hooks/useTasks';
+import { format, isSameDay } from 'date-fns';
+import { Plus, Clock, AlertCircle } from 'lucide-react';
+import { PriorityBadge } from '@/components/ui/priority-badge';
+import { CategoryBadge } from '@/components/ui/category-badge';
+import { Task } from '@/types/task';
 
 export default function CalendarPage() {
-  const {
-    tasks,
-    addTask,
-    toggleTaskStatus,
-    deleteTask,
-  } = useTasks();
-
-  const [isAddTaskOpen, setIsAddTaskOpen] = useState(false);
-
-  // selectedDate = the date the user clicked on the calendar (events-on-date)
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const { tasks, toggleTaskStatus } = useTasks();
 
-  // visibleMonth = the month currently shown in the calendar (used for top summary and monthly list)
-  // initialize to the start of current month
-  const [visibleMonth, setVisibleMonth] = useState<Date>(startOfMonth(new Date()));
+  const tasksForSelectedDate = tasks.filter(task => 
+    task.dueDate && isSameDay(new Date(task.dueDate), selectedDate)
+  );
 
-  const { toast } = useToast();
+  const completedCount = tasksForSelectedDate.filter(task => task.status === 'completed').length;
+  const pendingCount = tasksForSelectedDate.filter(task => task.status === 'pending').length;
 
-  // All tasks that belong to the currently visible month
-  const monthlyTasks = useMemo(() => {
-    return tasks.filter(
-      (task) => task.dueDate && isSameMonth(new Date(task.dueDate), visibleMonth)
+  const getTasksForDate = (date: Date) => {
+    return tasks.filter(task => 
+      task.dueDate && isSameDay(new Date(task.dueDate), date)
     );
-  }, [tasks, visibleMonth]);
+  };
 
-  // Events on the selected date (click on a date)
-  const eventsOnDate = useMemo(() => {
-    return tasks.filter(
-      (task) => task.dueDate && isSameDay(new Date(task.dueDate), selectedDate)
+  const renderDayContent = (date: Date) => {
+    const dayTasks = getTasksForDate(date);
+    if (dayTasks.length === 0) return null;
+
+    const urgent = dayTasks.filter(task => task.priority === 'urgent').length;
+    const high = dayTasks.filter(task => task.priority === 'high').length;
+
+    return (
+      <div className="w-full flex justify-center">
+        <div className="flex gap-1">
+          {urgent > 0 && (
+            <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
+          )}
+          {high > 0 && (
+            <div className="w-1.5 h-1.5 bg-orange-500 rounded-full"></div>
+          )}
+          {dayTasks.length > urgent + high && (
+            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+          )}
+        </div>
+      </div>
     );
-  }, [tasks, selectedDate]);
-
-  // Monthly stats computed from tasks in the visible month
-  const monthlyStats = useMemo(() => {
-    const now = new Date();
-    const stats = {
-      total: 0,
-      completed: 0,
-      pending: 0,
-      overdue: 0,
-    };
-
-    monthlyTasks.forEach((task) => {
-      stats.total++;
-      if (task.status === "completed") {
-        stats.completed++;
-      } else {
-        stats.pending++;
-        if (task.dueDate && new Date(task.dueDate) < now) {
-          stats.overdue++;
-        }
-      }
-    });
-
-    return stats;
-  }, [monthlyTasks]);
-
-  // Add a task
-  const handleAddTask = (taskData: any) => {
-    addTask(taskData);
-    toast({
-      title: "Task created",
-      description: "Your new task has been added successfully.",
-    });
-  };
-
-  // Toggle status
-  const handleToggleStatus = (id: string) => {
-    const task = tasks.find((t) => t.id === id);
-    if (task) {
-      toggleTaskStatus(id);
-      toast({
-        title: task.status === "pending" ? "Task completed" : "Task reopened",
-        description:
-          task.status === "pending"
-            ? `Great job completing "${task.title}"!`
-            : `"${task.title}" has been marked as pending.`,
-      });
-    }
-  };
-
-  // Delete
-  const handleDeleteTask = (id: string) => {
-    const task = tasks.find((t) => t.id === id);
-    if (task && deleteTask(id)) {
-      toast({
-        title: "Task deleted",
-        description: `"${task.title}" has been deleted.`,
-        variant: "destructive",
-      });
-    }
-  };
-
-  // Handler when calendar month view changes (user navigates months)
-  // NOTE: many calendar components support an onMonthChange(date) prop.
-  // If your Calendar component uses a different prop name, adapt accordingly.
-  const handleMonthChange = (date?: Date) => {
-    if (date) {
-      setVisibleMonth(startOfMonth(date));
-      // optionally update selectedDate to first day of that month
-      // keep selectedDate unchanged so user retains clicked date unless they click another
-    }
   };
 
   return (
-    <div className="space-y-8 pt-4 lg:pt-0">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Prism Calendar</h1>
-          <p className="text-muted-foreground mt-1">
-            Manage tasks, track deadlines, and visualize your schedule.
-          </p>
+          <h1 className="text-3xl font-bold text-foreground">Calendar</h1>
+          <p className="text-muted-foreground">Track your tasks by date</p>
         </div>
-        <Button
-          onClick={() => setIsAddTaskOpen(true)}
-          className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-        >
-          <Plus className="h-4 w-4 mr-2" />
+        <Button className="bg-primary hover:bg-primary/90">
+          <Plus className="w-4 h-4 mr-2" />
           Add Task
         </Button>
       </div>
 
-      {/* Top summary — now reflects the currently visible month */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatsCard
-          title={`Total (${format(visibleMonth, "MMMM yyyy")})`}
-          value={monthlyStats.total}
-          icon={Target}
-          color="bg-primary/10 text-primary border-primary/20"
-          description="Tasks this month"
-        />
-        <StatsCard
-          title="Completed"
-          value={monthlyStats.completed}
-          icon={CheckCircle}
-          color="bg-success/10 text-success border-success/20"
-          description={
-            monthlyStats.total > 0
-              ? `${Math.round((monthlyStats.completed / monthlyStats.total) * 100)}% completion`
-              : "0% completion"
-          }
-        />
-        <StatsCard
-          title="Pending"
-          value={monthlyStats.pending}
-          icon={Clock}
-          color="bg-silver/10 text-silver border-silver/20"
-          description="Tasks in progress"
-        />
-        <StatsCard
-          title="Overdue"
-          value={monthlyStats.overdue}
-          icon={AlertTriangle}
-          color="bg-destructive/10 text-destructive border-destructive/20"
-          description="Need immediate attention"
-        />
-      </div>
-
-      {/* Main Calendar + Task List Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Calendar (left) */}
-        <div className="lg:col-span-2 bg-card border border-border rounded-xl p-6 shadow-sm">
-          <h2 className="text-xl font-semibold mb-4">Calendar</h2>
+        {/* Calendar */}
+        <Card className="lg:col-span-2 bg-card border-border">
+          <CardHeader>
+            <CardTitle className="text-foreground">Task Calendar</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={setSelectedDate}
+              className="w-full"
+              components={{
+                DayContent: ({ date }) => (
+                  <div className="relative w-full h-full flex flex-col items-center justify-center">
+                    <span>{date.getDate()}</span>
+                    {renderDayContent(date)}
+                  </div>
+                )
+              }}
+            />
+          </CardContent>
+        </Card>
 
-          <Calendar
-            mode="single"
-            selected={selectedDate}
-            onSelect={(date) => {
-              if (date) {
-                setSelectedDate(date);
-                // ensure visibleMonth follows selection so top-summary updates when user clicks a date in another month
-                setVisibleMonth(startOfMonth(date));
-              }
-            }}
-            // try to capture month navigation — many calendar components support onMonthChange
-            onMonthChange={(date?: Date) => handleMonthChange(date)}
-            className="rounded-md border"
-          />
-        </div>
+        {/* Selected Date Tasks */}
+        <div className="space-y-4">
+          <Card className="bg-card border-border">
+            <CardHeader>
+              <CardTitle className="text-foreground flex items-center gap-2">
+                <Clock className="w-5 h-5" />
+                {format(selectedDate, 'MMM dd, yyyy')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-500">{completedCount}</div>
+                  <div className="text-xs text-muted-foreground">Completed</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-orange-500">{pendingCount}</div>
+                  <div className="text-xs text-muted-foreground">Pending</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-        {/* Right side: Events on selected date + Tasks in visible month */}
-        <div className="bg-card border border-border rounded-xl p-6 shadow-sm h-fit">
-          <h2 className="text-xl font-semibold mb-2">
-            Events on {format(selectedDate, "PPP")}
-          </h2>
+          {/* Tasks for selected date */}
+          <div className="space-y-3">
+            {tasksForSelectedDate.length === 0 ? (
+              <Card className="bg-card border-border">
+                <CardContent className="p-4 text-center text-muted-foreground">
+                  No tasks for this date
+                </CardContent>
+              </Card>
+            ) : (
+              tasksForSelectedDate.map((task) => (
+                <Card key={task.id} className="bg-card border-border hover:border-border/80 transition-colors">
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2">
+                          <h3 className={`font-medium text-sm text-foreground ${
+                            task.status === 'completed' ? 'line-through opacity-60' : ''
+                          }`}>
+                            {task.title}
+                          </h3>
+                        </div>
+                        
+                        <div className="flex flex-wrap gap-2 mb-2">
+                          <PriorityBadge priority={task.priority} />
+                          <CategoryBadge category={task.category} showIcon={false} />
+                        </div>
 
-          {eventsOnDate.length === 0 ? (
-            <div className="text-center py-4">
-              <p className="text-muted-foreground">No events on this date</p>
-            </div>
-          ) : (
-            <div className="space-y-3 mb-4 max-h-44 overflow-y-auto pr-1">
-              {eventsOnDate.map((task) => (
-                <TaskCard
-                  key={task.id}
-                  task={task}
-                  onToggleStatus={handleToggleStatus}
-                  onDelete={handleDeleteTask}
-                />
-              ))}
-            </div>
-          )}
+                        {task.description && (
+                          <p className="text-xs text-muted-foreground mb-2 line-clamp-2">
+                            {task.description}
+                          </p>
+                        )}
+                      </div>
 
-          <hr className="my-4" />
-
-          <h3 className="text-lg font-semibold mb-3">
-            Tasks in {format(visibleMonth, "MMMM yyyy")}
-          </h3>
-
-          {monthlyTasks.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">No tasks for this month</p>
-            </div>
-          ) : (
-            <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
-              {monthlyTasks.map((task) => (
-                <TaskCard
-                  key={task.id}
-                  task={task}
-                  onToggleStatus={handleToggleStatus}
-                  onDelete={handleDeleteTask}
-                />
-              ))}
-            </div>
-          )}
+                      <Button
+                        variant={task.status === 'completed' ? 'secondary' : 'default'}
+                        size="sm"
+                        onClick={() => toggleTaskStatus(task.id)}
+                        className={`shrink-0 ${
+                          task.status === 'completed' 
+                            ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30 border-green-500/50' 
+                            : 'bg-primary hover:bg-primary/90'
+                        }`}
+                      >
+                        {task.status === 'completed' ? 'Done' : 'Mark Done'}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </div>
         </div>
       </div>
-
-      {/* Add Task Modal */}
-      <AddTaskForm
-        open={isAddTaskOpen}
-        onOpenChange={setIsAddTaskOpen}
-        onSubmit={handleAddTask}
-      />
     </div>
   );
 }
