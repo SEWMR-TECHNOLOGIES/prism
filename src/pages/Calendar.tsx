@@ -1,20 +1,22 @@
 import { useState } from 'react';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useTasks } from '@/hooks/useTasks';
 import { format, isSameDay } from 'date-fns';
-import { Plus, Clock, AlertCircle } from 'lucide-react';
+import { Plus, Clock } from 'lucide-react';
 import { PriorityBadge } from '@/components/ui/priority-badge';
 import { CategoryBadge } from '@/components/ui/category-badge';
 import { Task } from '@/types/task';
+import { AddTaskForm } from '@/components/tasks/add-task-form';
 
 export default function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const { tasks, toggleTaskStatus } = useTasks();
 
-  const tasksForSelectedDate = tasks.filter(task => 
+  const [isAddTaskOpen, setIsAddTaskOpen] = useState(false);
+
+  const tasksForSelectedDate = tasks.filter(task =>
     task.dueDate && isSameDay(new Date(task.dueDate), selectedDate)
   );
 
@@ -22,7 +24,7 @@ export default function CalendarPage() {
   const pendingCount = tasksForSelectedDate.filter(task => task.status === 'pending').length;
 
   const getTasksForDate = (date: Date) => {
-    return tasks.filter(task => 
+    return tasks.filter(task =>
       task.dueDate && isSameDay(new Date(task.dueDate), date)
     );
   };
@@ -53,13 +55,19 @@ export default function CalendarPage() {
 
   return (
     <div className="space-y-8 pt-4 lg:pt-0">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Calendar</h1>
           <p className="text-muted-foreground">Track your tasks by date</p>
         </div>
-        <Button className="bg-primary hover:bg-primary/90">
-          <Plus className="w-4 h-4 mr-2" />
+
+        {/* ✅ Add Task button opens modal */}
+        <Button
+          onClick={() => setIsAddTaskOpen(true)}
+          className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+        >
+          <Plus className="h-4 w-4 mr-2" />
           Add Task
         </Button>
       </div>
@@ -68,7 +76,7 @@ export default function CalendarPage() {
         {/* Calendar */}
         <Card className="lg:col-span-2 bg-card border-border">
           <CardHeader>
-            <CardTitle className="text-foreground">Task Calendar</CardTitle>
+            <CardTitle className="text-foreground">Prism Calendar</CardTitle>
           </CardHeader>
           <CardContent>
             <Calendar
@@ -165,6 +173,13 @@ export default function CalendarPage() {
           </div>
         </div>
       </div>
+
+      {/* Add Task Modal */}
+      <AddTaskForm
+        open={isAddTaskOpen}
+        onOpenChange={setIsAddTaskOpen}
+        onSubmit={() => setIsAddTaskOpen(false)}
+      />
     </div>
   );
 }
