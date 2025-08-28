@@ -2,10 +2,16 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, CheckCircle, Calendar, Target, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import heroImage from '@/assets/hero-image.jpg';
+import { ThemeToggle } from '@/components/ui/theme-toggle'; // ✅ Import ThemeToggle
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
+      {/* ✅ Fixed ThemeToggle Button */}
+      <div className="absolute top-5 right-5 z-50">
+        <ThemeToggle />
+      </div>
+
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div
@@ -125,20 +131,25 @@ const Index = () => {
       {/* CTA Section */}
       <section className="py-24 gradient-primary relative">
         <div className="max-w-4xl mx-auto text-center px-6">
-          <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
+          <h2 className="text-3xl lg:text-4xl font-bold mb-6 text-gray-900 dark:text-white">
             Ready to take control of your day?
           </h2>
-          <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl mb-8 max-w-2xl mx-auto text-gray-700 dark:text-white/90">
             Join thousands of users managing their tasks and events seamlessly with Prism.
           </p>
           <Link to="/dashboard">
-            <Button size="lg" variant="secondary" className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
+            <Button
+              size="lg"
+              variant="secondary"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+            >
               Start Organizing Today
               <ArrowRight className="h-5 w-5 ml-2" />
             </Button>
           </Link>
         </div>
       </section>
+
     </div>
   );
 };

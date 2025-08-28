@@ -105,7 +105,7 @@ export default function Tasks() {
                           filterPriority !== 'all' || filterStatus !== 'all';
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="space-y-8 pt-4 lg:pt-0">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -119,7 +119,7 @@ export default function Tasks() {
           </div>
           <Button 
             onClick={() => setIsAddTaskOpen(true)}
-            className="gradient-primary text-white hover:opacity-90 transition-opacity"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
           >
             <Plus className="h-4 w-4 mr-2" />
             Add Task
