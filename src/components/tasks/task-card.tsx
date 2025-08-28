@@ -11,7 +11,8 @@ import {
   Check,
   Circle,
   AlertTriangle,
-  CalendarClock
+  CalendarClock,
+  Edit
 } from 'lucide-react';
 import { format, isToday, isTomorrow, isPast, differenceInHours } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -20,9 +21,10 @@ interface TaskCardProps {
   task: Task;
   onToggleStatus: (id: string) => void;
   onDelete: (id: string) => void;
+  onEdit?: (task: Task) => void;
 }
 
-export function TaskCard({ task, onToggleStatus, onDelete }: TaskCardProps) {
+export function TaskCard({ task, onToggleStatus, onDelete, onEdit }: TaskCardProps) {
   const formatDueDate = (date: Date) => {
     if (isToday(date)) return 'Today';
     if (isTomorrow(date)) return 'Tomorrow';
@@ -67,28 +69,25 @@ export function TaskCard({ task, onToggleStatus, onDelete }: TaskCardProps) {
                 {task.title}
               </h3>
               
-              {/* Due indicators */}
-              <div className="flex items-center gap-1">
-                {isOverdue && (
-                  <Badge variant="destructive" className="text-xs px-1.5 py-0.5">
-                    <AlertTriangle className="h-3 w-3 mr-1" />
-                    Overdue
-                  </Badge>
+              {/* Actions */}
+              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                {onEdit && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => onEdit(task)}
+                    className="h-6 w-6 p-0 hover:bg-muted"
+                  >
+                    <Edit className="w-3 h-3" />
+                  </Button>
                 )}
-                {isDueSoon && !isOverdue && (
-                  <Badge variant="outline" className="text-xs px-1.5 py-0.5 border-warning text-warning">
-                    <CalendarClock className="h-3 w-3 mr-1" />
-                    Due Soon
-                  </Badge>
-                )}
-                
                 <Button
-                  variant="ghost"
                   size="sm"
+                  variant="ghost"
                   onClick={() => onDelete(task.id)}
-                  className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="h-6 w-6 p-0 hover:bg-destructive/10 hover:text-destructive"
                 >
-                  <Trash2 className="h-3 w-3" />
+                  <Trash2 className="w-3 h-3" />
                 </Button>
               </div>
             </div>
@@ -114,6 +113,20 @@ export function TaskCard({ task, onToggleStatus, onDelete }: TaskCardProps) {
                   <Calendar className="h-3 w-3" />
                   <span>{formatDueDate(new Date(task.dueDate))}</span>
                 </div>
+              )}
+
+              {/* Due indicators */}
+              {isOverdue && (
+                <Badge variant="destructive" className="text-xs px-1.5 py-0.5">
+                  <AlertTriangle className="h-3 w-3 mr-1" />
+                  Overdue
+                </Badge>
+              )}
+              {isDueSoon && !isOverdue && (
+                <Badge variant="outline" className="text-xs px-1.5 py-0.5 border-warning text-warning">
+                  <CalendarClock className="h-3 w-3 mr-1" />
+                  Due Soon
+                </Badge>
               )}
             </div>
           </div>

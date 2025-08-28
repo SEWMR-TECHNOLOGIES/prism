@@ -1,14 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Goal, GoalStatus, GoalTimeframe } from '@/types/goal';
-import { Category } from '@/types/task';
-import { goalStore } from '@/lib/goalStore';
+import { Goal, goalStore } from '@/lib/goalStore';
 
 export function useGoals() {
   const [goals, setGoals] = useState<Goal[]>([]);
 
   useEffect(() => {
     setGoals(goalStore.getAllGoals());
-
+    
     const unsubscribe = goalStore.subscribe(() => {
       setGoals(goalStore.getAllGoals());
     });
@@ -28,16 +26,8 @@ export function useGoals() {
     return goalStore.deleteGoal(id);
   };
 
-  const getGoalsByTimeframe = (timeframe: GoalTimeframe) => {
+  const getGoalsByTimeframe = (timeframe: 'weekly' | 'monthly') => {
     return goalStore.getGoalsByTimeframe(timeframe);
-  };
-
-  const getGoalsByCategory = (category: Category) => {
-    return goalStore.getGoalsByCategory(category);
-  };
-
-  const getGoalsByStatus = (status: GoalStatus) => {
-    return goalStore.getGoalsByStatus(status);
   };
 
   return {
@@ -45,8 +35,6 @@ export function useGoals() {
     addGoal,
     updateGoal,
     deleteGoal,
-    getGoalsByTimeframe,
-    getGoalsByCategory,
-    getGoalsByStatus,
+    getGoalsByTimeframe
   };
 }

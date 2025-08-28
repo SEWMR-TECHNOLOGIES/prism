@@ -119,7 +119,7 @@ export default function Tasks() {
           </div>
           <Button 
             onClick={() => setIsAddTaskOpen(true)}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+            className="gradient-primary text-white hover:opacity-90 transition-opacity"
           >
             <Plus className="h-4 w-4 mr-2" />
             Add Task
@@ -262,10 +262,13 @@ export default function Tasks() {
             <div className="grid gap-4">
               {filteredTasks.map((task) => (
                     <TaskCard
-                      key={task.id}
-                      task={task}
-                      onToggleStatus={handleToggleStatus}
-                      onDelete={handleDeleteTask}
+                  key={task.id}
+                  task={task}
+                  onToggleStatus={handleToggleStatus}
+                  onDelete={handleDeleteTask}
+                  onEdit={(task) => {
+                    setEditingTask(task);
+                  }}
                     />
               ))}
             </div>

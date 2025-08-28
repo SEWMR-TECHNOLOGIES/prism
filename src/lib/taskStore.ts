@@ -1,26 +1,97 @@
 import { Task, TaskStats, Priority, Category, TaskStatus } from '@/types/task';
 
+// localStorage-backed task store
 class TaskStore {
   private tasks: Task[] = [];
-  private listeners: Array<() => void> = [];
+  private readonly STORAGE_KEY = 'tasks';
 
   constructor() {
-    // Load tasks from localStorage when app starts
-    const savedTasks = localStorage.getItem("tasks");
-    if (savedTasks) {
-      this.tasks = JSON.parse(savedTasks).map((task: Task) => ({
-        ...task,
-        dueDate: task.dueDate ? new Date(task.dueDate) : undefined,
-        createdAt: new Date(task.createdAt),
-        updatedAt: new Date(task.updatedAt),
-        completedAt: task.completedAt ? new Date(task.completedAt) : undefined,
-      }));
+    this.loadFromStorage();
+  }
+
+  private loadFromStorage() {
+    try {
+      const stored = localStorage.getItem(this.STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        // Convert date strings back to Date objects
+        this.tasks = parsed.map((task: any) => ({
+          ...task,
+          createdAt: new Date(task.createdAt),
+          updatedAt: new Date(task.updatedAt),
+          dueDate: task.dueDate ? new Date(task.dueDate) : undefined,
+          completedAt: task.completedAt ? new Date(task.completedAt) : undefined
+        }));
+      } else {
+        // Initialize with default tasks if no storage
+        this.tasks = [
+          {
+            id: '1',
+            title: 'Review quarterly reports',
+            description: 'Analyze Q3 performance metrics and prepare presentation',
+            category: 'work',
+            priority: 'high',
+            status: 'pending',
+            dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            tags: ['reports', 'quarterly']
+          },
+          {
+            id: '2',
+            title: 'Domain renewal reminder',
+            description: 'mywebsite.com expires in 30 days',
+            category: 'work',
+            priority: 'urgent',
+            status: 'pending',
+            dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            tags: ['domain', 'renewal']
+          },
+          {
+            id: '3',
+            title: 'Doctor appointment',
+            description: 'Annual health checkup',
+            category: 'health',
+            priority: 'medium',
+            status: 'pending',
+            dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            tags: ['health', 'checkup']
+          },
+          {
+            id: '4',
+            title: 'Finish project proposal',
+            description: 'Complete the new client project proposal',
+            category: 'work',
+            priority: 'high',
+            status: 'completed',
+            dueDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+            completedAt: new Date(),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            tags: ['proposal', 'client']
+          }
+        ];
+        this.saveToStorage();
+      }
+    } catch (error) {
+      console.error('Error loading tasks from storage:', error);
+      this.tasks = [];
     }
   }
 
-  private saveToLocalStorage() {
-    localStorage.setItem("tasks", JSON.stringify(this.tasks));
+  private saveToStorage() {
+    try {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.tasks));
+    } catch (error) {
+      console.error('Error saving tasks to storage:', error);
+    }
   }
+
+  private listeners: Array<() => void> = [];
 
   subscribe(listener: () => void) {
     this.listeners.push(listener);
@@ -30,7 +101,7 @@ class TaskStore {
   }
 
   private notify() {
-    this.saveToLocalStorage();
+    this.saveToStorage();
     this.listeners.forEach(listener => listener());
   }
 
@@ -49,7 +120,7 @@ class TaskStore {
       createdAt: new Date(),
       updatedAt: new Date()
     };
-
+    
     this.tasks.push(newTask);
     this.notify();
     return newTask;
@@ -64,7 +135,7 @@ class TaskStore {
       ...updates,
       updatedAt: new Date()
     };
-
+    
     this.notify();
     return this.tasks[taskIndex];
   }
@@ -72,7 +143,7 @@ class TaskStore {
   deleteTask(id: string): boolean {
     const initialLength = this.tasks.length;
     this.tasks = this.tasks.filter(task => task.id !== id);
-
+    
     if (this.tasks.length < initialLength) {
       this.notify();
       return true;
@@ -102,18 +173,18 @@ class TaskStore {
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
 
-    return this.tasks.reduce((acc, task) => {
+    const stats = this.tasks.reduce((acc, task) => {
       acc.total++;
-
+      
       if (task.status === 'completed') {
         acc.completed++;
       } else {
         acc.pending++;
-
+        
         if (task.dueDate) {
           const dueDate = new Date(task.dueDate);
           const dueDateOnly = new Date(dueDate.getFullYear(), dueDate.getMonth(), dueDate.getDate());
-
+          
           if (dueDateOnly < today) {
             acc.overdue++;
           } else if (dueDateOnly.getTime() === today.getTime()) {
@@ -123,6 +194,7 @@ class TaskStore {
           }
         }
       }
+      
       return acc;
     }, {
       total: 0,
@@ -132,6 +204,8 @@ class TaskStore {
       dueToday: 0,
       dueTomorrow: 0
     });
+
+    return stats;
   }
 
   getTasksByCategory(category: Category): Task[] {
@@ -149,11 +223,11 @@ class TaskStore {
   getUpcomingTasks(days: number = 7): Task[] {
     const now = new Date();
     const futureDate = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
-
+    
     return this.tasks
-      .filter(task =>
-        task.status === 'pending' &&
-        task.dueDate &&
+      .filter(task => 
+        task.status === 'pending' && 
+        task.dueDate && 
         new Date(task.dueDate) <= futureDate
       )
       .sort((a, b) => new Date(a.dueDate!).getTime() - new Date(b.dueDate!).getTime());
@@ -162,9 +236,9 @@ class TaskStore {
   getOverdueTasks(): Task[] {
     const now = new Date();
     return this.tasks
-      .filter(task =>
-        task.status === 'pending' &&
-        task.dueDate &&
+      .filter(task => 
+        task.status === 'pending' && 
+        task.dueDate && 
         new Date(task.dueDate) < now
       )
       .sort((a, b) => new Date(a.dueDate!).getTime() - new Date(b.dueDate!).getTime());

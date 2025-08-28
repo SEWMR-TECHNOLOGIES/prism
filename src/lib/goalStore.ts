@@ -1,23 +1,87 @@
-import { Goal, GoalStatus, GoalTimeframe } from '@/types/goal';
-import { Category } from '@/types/task';
+export interface Goal {
+  id: string;
+  title: string;
+  target: number;
+  current: number;
+  timeframe: 'weekly' | 'monthly';
+  category: string;
+  color: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
+// localStorage-backed goal store
 class GoalStore {
   private goals: Goal[] = [];
+  private readonly STORAGE_KEY = 'goals';
   private listeners: Array<() => void> = [];
 
   constructor() {
-    const savedGoals = localStorage.getItem('goals');
-    if (savedGoals) {
-      this.goals = JSON.parse(savedGoals).map((goal: Goal) => ({
-        ...goal,
-        createdAt: new Date(goal.createdAt),
-        updatedAt: new Date(goal.updatedAt),
-      }));
+    this.loadFromStorage();
+  }
+
+  private loadFromStorage() {
+    try {
+      const stored = localStorage.getItem(this.STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        // Convert date strings back to Date objects
+        this.goals = parsed.map((goal: any) => ({
+          ...goal,
+          createdAt: new Date(goal.createdAt),
+          updatedAt: new Date(goal.updatedAt)
+        }));
+      } else {
+        // Initialize with default goals if no storage
+        this.goals = [
+          {
+            id: '1',
+            title: 'Complete Work Tasks',
+            target: 10,
+            current: 7,
+            timeframe: 'weekly' as const,
+            category: 'work',
+            color: 'blue',
+            createdAt: new Date(),
+            updatedAt: new Date()
+          },
+          {
+            id: '2',
+            title: 'Exercise Sessions',
+            target: 12,
+            current: 8,
+            timeframe: 'weekly' as const,
+            category: 'health',
+            color: 'green',
+            createdAt: new Date(),
+            updatedAt: new Date()
+          },
+          {
+            id: '3',
+            title: 'Finish Monthly Project',
+            target: 1,
+            current: 0,
+            timeframe: 'monthly' as const,
+            category: 'work',
+            color: 'purple',
+            createdAt: new Date(),
+            updatedAt: new Date()
+          }
+        ];
+        this.saveToStorage();
+      }
+    } catch (error) {
+      console.error('Error loading goals from storage:', error);
+      this.goals = [];
     }
   }
 
-  private saveToLocalStorage() {
-    localStorage.setItem('goals', JSON.stringify(this.goals));
+  private saveToStorage() {
+    try {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.goals));
+    } catch (error) {
+      console.error('Error saving goals to storage:', error);
+    }
   }
 
   subscribe(listener: () => void) {
@@ -28,7 +92,7 @@ class GoalStore {
   }
 
   private notify() {
-    this.saveToLocalStorage();
+    this.saveToStorage();
     this.listeners.forEach(listener => listener());
   }
 
@@ -45,9 +109,9 @@ class GoalStore {
       ...goal,
       id: Math.random().toString(36).substr(2, 9),
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     };
-
+    
     this.goals.push(newGoal);
     this.notify();
     return newGoal;
@@ -60,9 +124,9 @@ class GoalStore {
     this.goals[goalIndex] = {
       ...this.goals[goalIndex],
       ...updates,
-      updatedAt: new Date(),
+      updatedAt: new Date()
     };
-
+    
     this.notify();
     return this.goals[goalIndex];
   }
@@ -70,7 +134,7 @@ class GoalStore {
   deleteGoal(id: string): boolean {
     const initialLength = this.goals.length;
     this.goals = this.goals.filter(goal => goal.id !== id);
-
+    
     if (this.goals.length < initialLength) {
       this.notify();
       return true;
@@ -78,25 +142,8 @@ class GoalStore {
     return false;
   }
 
-  getGoalsByTimeframe(timeframe: GoalTimeframe): Goal[] {
+  getGoalsByTimeframe(timeframe: 'weekly' | 'monthly'): Goal[] {
     return this.goals.filter(goal => goal.timeframe === timeframe);
-  }
-
-  getGoalsByCategory(category: Category): Goal[] {
-    return this.goals.filter(goal => goal.category === category);
-  }
-
-  getGoalsByStatus(status: GoalStatus): Goal[] {
-    return this.goals.filter(goal => {
-      if (status === 'completed') {
-        return goal.target <= 0;
-      } else if (status === 'on-track') {
-        return goal.target > 0;
-      } else if (status === 'behind') {
-        return goal.target < 0;
-      }
-      return false;
-    });
   }
 }
 

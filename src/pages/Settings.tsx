@@ -7,6 +7,7 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
+import { useTheme } from '@/contexts/theme-context';
 import { 
   Settings as SettingsIcon, 
   Bell, 
@@ -29,11 +30,12 @@ export default function SettingsPage() {
   });
 
   const [preferences, setPreferences] = useState({
-    theme: 'dark',
     language: 'en',
     dateFormat: 'MM/dd/yyyy',
     timeFormat: '12h'
   });
+
+  const { theme, setTheme } = useTheme();
 
   const handleNotificationChange = (key: string, value: boolean) => {
     setNotifications(prev => ({ ...prev, [key]: value }));
@@ -123,14 +125,14 @@ export default function SettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label className="text-foreground mb-2 block">Theme</Label>
-              <Select value={preferences.theme} onValueChange={(value) => handlePreferenceChange('theme', value)}>
+              <Select value={theme} onValueChange={(value: 'light' | 'dark' | 'system') => setTheme(value)}>
                 <SelectTrigger className="bg-background border-input">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="light">Light</SelectItem>
                   <SelectItem value="dark">Dark</SelectItem>
-                  <SelectItem value="auto">Auto</SelectItem>
+                  <SelectItem value="system">System</SelectItem>
                 </SelectContent>
               </Select>
             </div>

@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import prismLogo from '@/assets/logo.png';
+import { ThemeToggle } from '../ui/theme-toggle';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -79,6 +80,7 @@ export function Sidebar({ className }: SidebarProps) {
                   />
                 </div>
                 <span className="font-semibold text-lg">prism</span>
+                 <ThemeToggle />
               </div>
             )}
 
