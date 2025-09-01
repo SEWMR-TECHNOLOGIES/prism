@@ -9,6 +9,7 @@ import {
   X,
   Target,
   Clock,
+  Repeat,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -20,6 +21,7 @@ const navigation = [
   { name: "Tasks", href: "/tasks", icon: CheckSquare },
   { name: "Calendar", href: "/calendar", icon: Calendar },
   { name: "Goals", href: "/goals", icon: Target },
+  { name: 'Routines', href: '/routines', icon: Repeat },
   { name: "Archive", href: "/archive", icon: Clock },
   { name: "Settings", href: "/settings", icon: Settings },
 ];

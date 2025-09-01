@@ -6,6 +6,7 @@ import Dashboard from '@/pages/Dashboard';
 import Tasks from '@/pages/Tasks';
 import Calendar from '@/pages/Calendar';
 import Goals from '@/pages/Goals';
+import Routines from '@/pages/Routines';
 import Archive from '@/pages/Archive';
 import Settings from '@/pages/Settings';
 import NotFound from '@/pages/NotFound';
@@ -22,6 +23,7 @@ function App() {
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/goals" element={<Goals />} />
+            <Route path="/routines" element={<Routines />} />
             <Route path="/archive" element={<Archive />} />
             <Route path="/settings" element={<Settings />} />
           </Route>
