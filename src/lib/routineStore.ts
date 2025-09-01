@@ -222,13 +222,124 @@ class RoutineStore {
     const actualCompletions = routine.dailyProgress.filter(dp => dp.completed).length;
     const overallProgress = totalPossibleCompletions > 0 ? (actualCompletions / totalPossibleCompletions) * 100 : 0;
 
+    // Calculate streaks
+    const { currentStreak, longestStreak } = this.calculateStreaks(routine);
+
+    // Average daily success rate
+    const allDates = this.getDatesInRange(routine.startDate, routine.endDate);
+    const pastDates = allDates.filter(date => date <= today);
+    const dailySuccessRates = pastDates.map(date => {
+      const dateStr = format(date, 'yyyy-MM-dd');
+      const completedCount = routine.dailyProgress.filter(
+        dp => dp.date === dateStr && dp.completed
+      ).length;
+      return totalSubTargets > 0 ? (completedCount / totalSubTargets) * 100 : 0;
+    });
+    const averageDailySuccess = dailySuccessRates.length > 0 
+      ? dailySuccessRates.reduce((sum, rate) => sum + rate, 0) / dailySuccessRates.length 
+      : 0;
+
+    // Success Score calculation
+    const streakBonus = Math.min(longestStreak * 2, 100); // Cap at 100
+    const successScore = (overallProgress * 0.6) + (averageDailySuccess * 0.3) + (streakBonus * 0.1);
+
     return {
       totalSubTargets,
       totalDays,
       dailyCompletionRate,
       overallProgress,
-      currentStreak: 0, // TODO: implement streak calculation
-      longestStreak: 0  // TODO: implement streak calculation
+      currentStreak,
+      longestStreak,
+      averageDailySuccess,
+      successScore: Math.min(successScore, 100)
+    };
+  }
+
+  private calculateStreaks(routine: Routine): { currentStreak: number; longestStreak: number } {
+    const today = startOfDay(new Date());
+    const allDates = this.getDatesInRange(routine.startDate, routine.endDate);
+    const pastDates = allDates.filter(date => date <= today).reverse(); // Most recent first
+
+    let currentStreak = 0;
+    let longestStreak = 0;
+    let tempStreak = 0;
+
+    for (const date of pastDates) {
+      const dateStr = format(date, 'yyyy-MM-dd');
+      const completedCount = routine.dailyProgress.filter(
+        dp => dp.date === dateStr && dp.completed
+      ).length;
+      
+      const isPerfectDay = completedCount === routine.subTargets.length && routine.subTargets.length > 0;
+      
+      if (isPerfectDay) {
+        tempStreak++;
+        if (date.getTime() === today.getTime() || tempStreak === 1) {
+          currentStreak = tempStreak;
+        }
+      } else {
+        if (tempStreak > longestStreak) {
+          longestStreak = tempStreak;
+        }
+        tempStreak = 0;
+        if (currentStreak > 0 && date.getTime() !== today.getTime()) {
+          currentStreak = 0;
+        }
+      }
+    }
+
+    if (tempStreak > longestStreak) {
+      longestStreak = tempStreak;
+    }
+
+    return { currentStreak, longestStreak };
+  }
+
+  private getDatesInRange(startDate: Date, endDate: Date): Date[] {
+    const dates = [];
+    let currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+      dates.push(new Date(currentDate));
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return dates;
+  }
+
+  getSubTargetStats(routineId: string, subTargetId: string) {
+    const routine = this.getRoutineById(routineId);
+    if (!routine) return null;
+
+    const totalDays = differenceInDays(routine.endDate, routine.startDate) + 1;
+    const completedDays = routine.dailyProgress.filter(
+      dp => dp.subTargetId === subTargetId && dp.completed
+    ).length;
+    
+    const successRate = totalDays > 0 ? (completedDays / totalDays) * 100 : 0;
+    
+    // Calculate best streak for this sub-target
+    const allDates = this.getDatesInRange(routine.startDate, routine.endDate);
+    let bestStreak = 0;
+    let currentStreak = 0;
+
+    for (const date of allDates) {
+      const dateStr = format(date, 'yyyy-MM-dd');
+      const isCompleted = routine.dailyProgress.some(
+        dp => dp.date === dateStr && dp.subTargetId === subTargetId && dp.completed
+      );
+      
+      if (isCompleted) {
+        currentStreak++;
+        bestStreak = Math.max(bestStreak, currentStreak);
+      } else {
+        currentStreak = 0;
+      }
+    }
+
+    return {
+      successRate,
+      bestStreak,
+      completedDays,
+      totalDays
     };
   }
 

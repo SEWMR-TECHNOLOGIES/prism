@@ -61,6 +61,10 @@ export function useRoutines() {
     return routineStore.getActiveRoutines();
   };
 
+  const getSubTargetStats = (routineId: string, subTargetId: string) => {
+    return routineStore.getSubTargetStats(routineId, subTargetId);
+  };
+
   return {
     routines,
     addRoutine,
@@ -73,6 +77,7 @@ export function useRoutines() {
     updateDailyProgress,
     getDailyProgress,
     getRoutineStats,
-    getActiveRoutines
+    getActiveRoutines,
+    getSubTargetStats
   };
 }

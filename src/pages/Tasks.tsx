@@ -110,12 +110,8 @@ export default function Tasks() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent">
-              All Tasks
-            </h1>
-            <p className="text-muted-foreground mt-2">
-              Manage and organize all your tasks
-            </p>
+            <h1 className="text-3xl font-bold text-foreground">All Tasks</h1>
+            <p className="text-muted-foreground">Manage and organize all your tasks</p>
           </div>
           <Button 
             onClick={() => setIsAddTaskOpen(true)}

@@ -32,4 +32,13 @@ export interface RoutineStats {
   overallProgress: number; // % completed in entire range
   currentStreak: number;
   longestStreak: number;
+  averageDailySuccess: number;
+  successScore: number;
+}
+
+export interface SubTargetStats {
+  successRate: number;
+  bestStreak: number;
+  completedDays: number;
+  totalDays: number;
 }
