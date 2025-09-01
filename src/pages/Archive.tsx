@@ -37,11 +37,11 @@ export default function ArchivePage() {
   }).length;
 
   return (
-    <div className="space-y-8 pt-4 lg:pt-0">
+    <div className="space-y-8 pt-5 lg:pt-0">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Archive</h1>
-          <p className="text-muted-foreground">View and manage completed tasks</p>
+          <p className="text-muted-foreground"> View and manage all your completed tasks</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="text-right">

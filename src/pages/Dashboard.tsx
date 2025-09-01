@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { Link } from 'react-router-dom';
 
 export default function Dashboard() {
   const { 
@@ -129,9 +130,11 @@ export default function Dashboard() {
           <div className="xl:col-span-2 space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold">Recent Tasks</h2>
-              <Button variant="outline" size="sm">
-                View All
-              </Button>
+               <Link to="/tasks">
+                <Button variant="outline" size="sm">
+                  View All
+                </Button>
+              </Link>
             </div>
             
             {recentTasks.length === 0 ? (

@@ -93,15 +93,17 @@ export default function GoalsPage() {
   const monthlyGoals = getGoalsByTimeframe('monthly');
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 pt-4 lg:pt-0">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Goals</h1>
-          <p className="text-muted-foreground">Track your progress and achieve your targets</p>
+          <p className="text-muted-foreground">
+            Track your progress and achieve your targets
+          </p>
         </div>
-        <Button 
+        <Button
           onClick={() => setShowAddForm(true)}
-          className="modern-btn-primary"
+          className="bg-primary hover:bg-primary/90"
         >
           <Plus className="w-4 h-4 mr-2" />
           Add Goal

@@ -26,16 +26,19 @@ export default function Routines() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 pt-4 lg:pt-0">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Routines</h1>
+          <h1 className="text-3xl font-bold text-foreground">Routines</h1>
           <p className="text-muted-foreground">
             Track daily habits and build consistent routines
           </p>
         </div>
-        <Button onClick={() => setShowAddForm(true)}>
-          <Plus className="mr-2 h-4 w-4" />
+        <Button 
+          onClick={() => setShowAddForm(true)} 
+          className="bg-primary hover:bg-primary/90"
+        >
+          <Plus className="w-4 h-4 mr-2" />
           New Routine
         </Button>
       </div>

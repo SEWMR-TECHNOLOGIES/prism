@@ -55,22 +55,23 @@ export default function CalendarPage() {
 
   return (
     <div className="space-y-8 pt-4 lg:pt-0">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Calendar</h1>
-          <p className="text-muted-foreground">Track your tasks by date</p>
-        </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">Prism Calendar</h1>
+              <p className="text-muted-foreground">
+                Track your tasks by date and manage schedules efficiently
+              </p>
+            </div>
+            <Button
+              onClick={() => setIsAddTaskOpen(true)}
+              className="bg-primary hover:bg-primary/90"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Tak
+            </Button>
+          </div>
 
-        {/* ✅ Add Task button opens modal */}
-        <Button
-          onClick={() => setIsAddTaskOpen(true)}
-          className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Add Task
-        </Button>
-      </div>
+
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Calendar */}

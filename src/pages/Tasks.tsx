@@ -111,7 +111,7 @@ export default function Tasks() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-foreground">All Tasks</h1>
-            <p className="text-muted-foreground">Manage and organize all your tasks</p>
+            <p className="text-muted-foreground">Manage and organize all your tasks efficiently</p>
           </div>
           <Button 
             onClick={() => setIsAddTaskOpen(true)}
