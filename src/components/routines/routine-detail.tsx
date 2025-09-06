@@ -14,6 +14,7 @@ import { EditSubTargetForm } from '@/components/routines/edit-subtarget-form';
 import { RoutineSummary } from '@/components/routines/routine-summary';
 import { SubTarget } from '@/types/routine';
 import { useToast } from '@/hooks/use-toast';
+import DayCheckbox from '../ui/day-check';
 
 interface RoutineDetailProps {
   routine: Routine;
@@ -262,17 +263,16 @@ export function RoutineDetail({ routine, onBack }: RoutineDetailProps) {
                               <div className="text-xs font-medium">
                                 {format(day, 'd')}
                               </div>
-                              <Checkbox
-                                checked={isCompleted}
-                                disabled={isFutureDay || !isToday}
-                                onCheckedChange={() => handleProgressToggle(subTarget.id, day)}
-                                className={`
-                                  ${isToday ? 'ring-2 ring-primary ring-offset-2' : ''}
-                                  ${isPastDay && !isCompleted ? 'opacity-60' : ''}
-                                  ${isFutureDay ? 'opacity-30' : ''}
-                                  ${!isToday && isPastDay ? 'cursor-not-allowed' : ''}
-                                `}
+                              <DayCheckbox
+                                id={subTarget.id}
+                                day={new Date(day)}       // make sure day is a Date object
+                                isCompleted={isCompleted}
+                                isFutureDay={isFutureDay}
+                                isToday={isToday}
+                                isPastDay={isPastDay}
+                                onToggle={(id, day) => handleProgressToggle(id, day)}
                               />
+
                             </div>
                           );
                         })}
